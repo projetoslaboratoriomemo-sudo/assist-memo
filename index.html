@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#ed1c24">
+  <meta name="description" content="Assist Memo — diagnóstico técnico passo a passo para equipamentos de refrigeração.">
+  <title>Memo | Diagnóstico técnico</title>\n  <meta name="build" content="sem-assist-v1">
+  <style>
+
+:root {
+  --memo-red: #ed1c24;
+  --memo-red-dark: #af0e14;
+  --memo-orange: #fbab24;
+  --memo-cream: #efece0;
+  --ink: #1b1b1b;
+  --muted: #818285;
+  --line: #d1cfc5;
+  --soft: #efece0;
+  --white: #ffffff;
+  --green: #21734b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--soft);
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--soft);
+  font-family: Roboto, Arial, Helvetica, sans-serif;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+.splash {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 78% 18%, rgba(251, 171, 36, 0.24), transparent 28%),
+    linear-gradient(135deg, var(--memo-red), var(--memo-red-dark));
+}
+
+.splash::before,
+.splash::after {
+  content: "";
+  position: fixed;
+  width: 560px;
+  height: 560px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transform: rotate(45deg);
+}
+
+.splash::before {
+  top: -370px;
+  left: -180px;
+}
+
+.splash::after {
+  right: -300px;
+  bottom: -360px;
+}
+
+.splash-entry {
+  z-index: 1;
+  width: min(540px, 100%);
+  padding: 48px 42px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 0;
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--memo-cream);
+  box-shadow: 0 28px 90px rgba(70, 0, 3, 0.28);
+  cursor: pointer;
+}
+
+.splash-entry img {
+  width: min(320px, 82%);
+  height: auto;
+}
+
+.splash-divider {
+  width: 54px;
+  height: 3px;
+  margin: 30px 0 22px;
+  background: var(--memo-red);
+}
+
+.splash-entry strong {
+  color: var(--memo-red);
+  font-size: clamp(34px, 7vw, 54px);
+  letter-spacing: 0.24em;
+}
+
+.splash-entry small {
+  margin-top: 8px;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.enter-label {
+  margin-top: 54px;
+  padding: 12px 18px;
+  border: 1px solid var(--memo-red);
+  border-radius: 40px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--memo-red);
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  min-height: 76px;
+  padding: 0 max(22px, calc((100% - 1180px) / 2));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 4px solid var(--memo-red);
+  background: var(--white);
+}
+
+.memo-brand {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.memo-brand > img {
+  width: 126px;
+  height: auto;
+  object-fit: contain;
+}
+
+.memo-brand strong,
+.memo-brand small {
+  display: block;
+}
+
+.memo-brand strong {
+  font-size: 14px;
+  letter-spacing: 0.16em;
+}
+
+.memo-brand small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.header-actions button {
+  min-height: 42px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.header-actions button:hover {
+  background: var(--memo-cream);
+}
+
+.header-actions span {
+  color: var(--memo-red);
+  font-size: 17px;
+}
+
+.app-content {
+  flex: 1;
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 38px 0 68px;
+}
+
+.back-button {
+  margin-bottom: 28px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.back-button span {
+  color: var(--memo-red);
+  font-size: 20px;
+}
+
+.screen-heading {
+  max-width: 760px;
+  margin-bottom: 30px;
+}
+
+.section-kicker {
+  margin: 0 0 8px;
+  color: var(--memo-red);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+.screen-heading h1 {
+  margin: 0;
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.screen-heading > p:last-child {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.product-card {
+  position: relative;
+  min-height: 390px;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  border-color: #c9a4a6;
+  box-shadow: 0 18px 45px rgba(22, 24, 28, 0.1);
+}
+
+.product-media {
+  position: relative;
+  height: 235px;
+  overflow: hidden;
+  display: block;
+  background: #e8e8e9;
+}
+
+.product-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 260ms ease;
+}
+
+.product-card:hover .product-media img {
+  transform: scale(1.035);
+}
+
+.product-media > span {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 7px 9px;
+  border-radius: 2px;
+  background: var(--memo-red);
+  color: white;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.product-copy {
+  padding: 22px 50px 24px 22px;
+}
+
+.product-copy strong,
+.product-copy small {
+  display: block;
+}
+
+.product-copy strong {
+  font-size: 20px;
+}
+
+.product-copy small {
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.product-arrow {
+  position: absolute;
+  right: 20px;
+  bottom: 24px;
+  color: var(--memo-red);
+  font-size: 23px;
+}
+
+.selected-product {
+  margin-bottom: 14px;
+  padding: 15px 18px;
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #ead0d2;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 12px;
+}
+
+.selected-product span {
+  color: var(--muted);
+}
+
+.selected-product strong {
+  color: var(--memo-red);
+}
+
+.symptom-menu {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+}
+
+.symptom-menu button {
+  width: 100%;
+  min-height: 138px;
+  padding: 18px 24px;
+  display: grid;
+  grid-template-columns: 50px 105px 1fr 40px;
+  align-items: center;
+  gap: 18px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: white;
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.symptom-menu button:last-child {
+  border-bottom: 0;
+}
+
+.symptom-menu button:hover {
+  background: #fff9f9;
+}
+
+.symptom-index {
+  color: #a2a5aa;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.symptom-menu img {
+  width: 96px;
+  height: 88px;
+  object-fit: contain;
+  filter: grayscale(1);
+}
+
+.symptom-text strong,
+.symptom-text small {
+  display: block;
+}
+
+.symptom-text strong {
+  font-size: 23px;
+}
+
+.symptom-text small {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.symptom-arrow {
+  color: var(--memo-red);
+  font-size: 25px;
+}
+
+.diagnostic-layout {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.diagnostic-progress {
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.progress-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.progress-dots i {
+  width: 22px;
+  height: 4px;
+  border-radius: 4px;
+  background: #d8dade;
+}
+
+.progress-dots i:first-child,
+.progress-dots i:nth-child(2) {
+  background: var(--memo-red);
+}
+
+.diagnostic-card {
+  padding: clamp(28px, 6vw, 58px);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+  box-shadow: 0 14px 34px rgba(27, 27, 27, 0.08);
+}
+
+.diagnostic-icon {
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  color: white;
+  background: var(--memo-red);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.diagnostic-code {
+  margin: 26px 0 10px;
+  color: var(--memo-red);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.diagnostic-card h2 {
+  max-width: 720px;
+  margin: 0;
+  font-size: clamp(27px, 4.5vw, 42px);
+  line-height: 1.14;
+  letter-spacing: -0.03em;
+}
+
+.supporting-copy {
+  margin-top: 20px;
+  padding: 16px 18px;
+  border-radius: 4px;
+  background: var(--soft);
+}
+
+.supporting-copy p {
+  margin: 5px 0;
+  color: #5d6168;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.critical-warning {
+  margin-top: 18px;
+  padding: 15px 17px;
+  border: 1px solid #e9b8bb;
+  border-radius: 4px;
+  color: #70474a;
+  background: #fff5f5;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.critical-warning strong {
+  display: block;
+  color: var(--memo-red);
+}
+
+.original-checklist {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.original-checklist label {
+  padding: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: #565a61;
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.original-checklist input {
+  accent-color: var(--memo-red);
+}
+
+.diagnostic-actions {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.diagnostic-actions.single {
+  grid-template-columns: 1fr;
+}
+
+.diagnostic-actions button,
+.terminal-actions button,
+.terminal-actions a {
+  min-height: 64px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.diagnostic-actions button span {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.diagnostic-actions .yes {
+  border: 1px solid #b8d7c7;
+  color: var(--green);
+  background: #f1faf5;
+}
+
+.diagnostic-actions .yes span {
+  color: white;
+  background: var(--green);
+}
+
+.diagnostic-actions .no {
+  border: 1px solid #ebc1c4;
+  color: var(--memo-red);
+  background: #fff6f6;
+}
+
+.diagnostic-actions .no span {
+  color: white;
+  background: var(--memo-red);
+}
+
+.secondary-diagnostic {
+  border: 1px solid var(--ink);
+  color: white;
+  background: var(--ink);
+}
+
+.secondary-diagnostic span {
+  color: var(--ink);
+  background: white;
+}
+
+.terminal .diagnostic-icon {
+  color: var(--green);
+  background: #eaf6ef;
+}
+
+.terminal-actions {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+}
+
+.terminal-actions button {
+  border: 1px solid var(--memo-red);
+  color: white;
+  background: var(--memo-red);
+}
+
+.terminal-actions a {
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: white;
+}
+
+.pressure-screen,
+.video-card,
+.support-card,
+.empty-original {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: clamp(24px, 5vw, 46px);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+}
+
+.pressure-screen img {
+  width: 100%;
+  height: auto;
+}
+
+.video-card > div p,
+.support-card > p {
+  margin: 0 0 8px;
+  color: var(--memo-red);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.video-card h2,
+.support-card h2,
+.empty-original h2 {
+  margin: 0 0 24px;
+  font-size: clamp(25px, 4vw, 38px);
+}
+
+.video-card iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 4px;
+}
+
+.support-card {
+  text-align: center;
+  background: var(--ink);
+  color: white;
+}
+
+.support-card > img {
+  width: min(220px, 70%);
+  height: auto;
+  margin-bottom: 30px;
+}
+
+.support-card > p {
+  margin-bottom: 12px;
+}
+
+.support-card h2 {
+  max-width: 650px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.support-card > div {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.support-card a,
+.empty-original button {
+  min-height: 52px;
+  padding: 0 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--memo-red);
+  border-radius: 4px;
+  color: white;
+  background: var(--memo-red);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.support-card a + a {
+  color: white;
+  border-color: #818285;
+  background: transparent;
+}
+
+.empty-original {
+  text-align: center;
+}
+
+.empty-original > span {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: white;
+  background: var(--memo-red);
+  font-weight: 800;
+}
+
+.empty-original p {
+  max-width: 560px;
+  margin: 0 auto 24px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.empty-original button {
+  cursor: pointer;
+}
+
+.app-footer {
+  min-height: 58px;
+  padding: 0 max(22px, calc((100% - 1180px) / 2));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 4px solid var(--memo-red);
+  color: #cfcfd0;
+  background: var(--ink);
+  font-size: 11px;
+}
+
+@media (max-width: 760px) {
+  .splash-entry {
+    padding: 42px 24px 30px;
+  }
+
+  .app-header {
+    min-height: 68px;
+    padding: 0 14px;
+  }
+
+  .memo-brand > img {
+    width: 102px;
+  }
+
+  .memo-brand small {
+    display: none;
+  }
+
+  .header-actions button {
+    min-width: 40px;
+    padding: 0 8px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+    font-size: 8px;
+  }
+
+  .app-content {
+    width: min(100% - 24px, 600px);
+    padding-top: 24px;
+  }
+
+  .screen-heading {
+    margin-bottom: 22px;
+  }
+
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .product-card {
+    min-height: 150px;
+    display: grid;
+    grid-template-columns: 128px 1fr;
+  }
+
+  .product-media {
+    height: 100%;
+    min-height: 150px;
+  }
+
+  .product-media > span {
+    top: 10px;
+    left: 8px;
+    font-size: 7px;
+  }
+
+  .product-copy {
+    padding: 25px 35px 22px 18px;
+  }
+
+  .product-copy strong {
+    font-size: 17px;
+  }
+
+  .product-copy small {
+    font-size: 12px;
+  }
+
+  .product-arrow {
+    right: 13px;
+    bottom: 20px;
+  }
+
+  .selected-product {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .symptom-menu button {
+    min-height: 112px;
+    padding: 14px;
+    grid-template-columns: 26px 66px 1fr 22px;
+    gap: 10px;
+  }
+
+  .symptom-menu img {
+    width: 62px;
+    height: 66px;
+  }
+
+  .symptom-text strong {
+    font-size: 18px;
+  }
+
+  .symptom-text small {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .diagnostic-card {
+    padding: 26px 20px;
+  }
+
+  .diagnostic-card h2 {
+    font-size: 28px;
+  }
+
+  .diagnostic-actions,
+  .original-checklist {
+    grid-template-columns: 1fr;
+  }
+
+  .terminal-actions,
+  .support-card > div {
+    flex-direction: column;
+  }
+
+  .app-footer {
+    padding: 16px 14px;
+    align-items: flex-start;
+    gap: 14px;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+
+  .original-checklist input{width:20px;height:20px;accent-color:var(--memo-red)}
+  .critical-warning{margin:22px 0;padding:16px;border-left:4px solid #d61920;background:#fff2f2;line-height:1.55}
+  .critical-warning strong{display:block;margin-bottom:4px}
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <noscript>Ative o JavaScript para usar o diagnóstico Assist Memo.</noscript>
+  <script src="assets-1.js"></script><script src="assets-2.js"></script>
+  <script src="assets-3.js"></script><script src="assets-4.js"></script>
+  <script>
+  const APP_DATA={"screens":{"CONTINUIDADEYTB":{"name":"CONTINUIDADEYTB","title":"CONTINUIDADEYTB","elements":[{"name":"NavegadorWeb1","type":"WebViewer","clickable":false,"url":"https://www.youtube.com/watch?v=Ej9Je0PRXdM","checked":false}],"navigation":{}},"MEDIR12VDC":{"name":"MEDIR12VDC","title":"MEDIR12VDC","elements":[{"name":"NavegadorWeb1","type":"WebViewer","clickable":false,"url":"https://www.youtube.com/watch?v=0ajGcKrnlKo","checked":false}],"navigation":{}},"MEDIRTENSAOYTB":{"name":"MEDIRTENSAOYTB","title":"MEDIRTENSAOYTB","elements":[{"name":"NavegadorWeb1","type":"WebViewer","clickable":false,"url":"https://www.youtube.com/watch?v=CFK7xoRXwD8","checked":false}],"navigation":{}},"Screen1":{"name":"Screen1","title":"Home","elements":[{"name":"Imagem1","type":"Image","picture":"logo.png","clickable":true,"checked":false}],"navigation":{"Imagem1":"home"}},"T0":{"name":"T0","title":"T0","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"NÃO_GELA","type":"Image","picture":"pngwing.com(1).png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"NÃO REFRIGERA","clickable":false,"checked":false},{"name":"ILUMINAÇÃO","type":"Image","picture":"pngwing.com.png","clickable":true,"checked":false},{"name":"Legenda2","type":"Label","text":"ILUMINAÇÃO","clickable":false,"checked":false},{"name":"VAZAMENTO","type":"Image","picture":"vazamento.png","clickable":false,"checked":false},{"name":"Legenda3","type":"Label","text":"VAZAMENTO","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home","ILUMINAÇÃO":"T2","VAZAMENTO":"T3","NÃO_GELA":"T1"}},"T0C":{"name":"T0C","title":"T0","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"NÃO_GELA","type":"Image","picture":"pngwing.com(1).png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"NÃO REFRIGERA","clickable":false,"checked":false},{"name":"ILUMINAÇÃO","type":"Image","picture":"pngwing.com.png","clickable":true,"checked":false},{"name":"Legenda2","type":"Label","text":"ILUMINAÇÃO","clickable":false,"checked":false},{"name":"VAZAMENTO","type":"Image","picture":"vazamento.png","clickable":false,"checked":false},{"name":"Legenda3","type":"Label","text":"VAZAMENTO","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home","ILUMINAÇÃO":"T2","VAZAMENTO":"T3","NÃO_GELA":"T1C"}},"T0P":{"name":"T0P","title":"T0P","elements":[],"navigation":{}},"T1":{"name":"T1","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"EQUIPAMENTO LIGADO? LED/VENTILADOR/ RANDÔMETRO?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T1_1","BNAO":"T1_2","ISIte":"site","iSAC":"sac","HOME":"home"}},"T1111":{"name":"T1111","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"PRESSÃO DE DESARME DO PRESSOSTATO REGULADO CORRETAMENTE?  \n                     (CONSULTAR TABELA)","clickable":false,"checked":false},{"name":"Imagem1","type":"Image","picture":"sinal-de-interrogacao.png","clickable":true,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T11111","BNAO":"T11112","ISIte":"site","iSAC":"sac","HOME":"home","Imagem1":"TABELADEPRESSOES"}},"T11111":{"name":"T11111","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VÁLVULA SOLENÓIDE ESTÁ ATUANDO?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T111111","BNAO":"T111112","ISIte":"site","iSAC":"sac","HOME":"home"}},"T111111":{"name":"T111111","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"A SUCÇÃO DO COMPRESSOR/SAIDA DO BOILER AO DESARMAR ESTÁ FRIA?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"sac","BNAO":"T1111112","ISIte":"site","iSAC":"sac","HOME":"home"}},"T1111112":{"name":"T1111112","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"COMPRESSOR AQUECENDO MUITO?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T11111121","BNAO":"T11111122","ISIte":"site","iSAC":"sac","HOME":"home"}},"T11111121":{"name":"T11111121","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"A TENSÃO ESTÁ CORRETA?","clickable":false,"checked":false},{"name":"Legenda3","type":"Label","text":"ESTÁ OCORRENDO QUEDA DE TENSÃO AO PARTIR COMPRESSOR?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T11_11_11_21_1","BNAO":"T11_11_11_21_2","ISIte":"site","iSAC":"sac","HOME":"home"}},"T11111122":{"name":"T11111122","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"ENTRAR EM CONTATO COM A ASSISTENCIA PARA MELHOR AVALIAÇÃO.","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T111112":{"name":"T111112","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFICAR LIGAÇÃO ELÉTRICA DA VÁLVULA SOLENÓIDE, ESTÁ CHEGANDO TENSÃO NA BOBINA DA VÁLVULA SOLENÓIDE?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T1111121","BNAO":"T1111122","ISIte":"site","iSAC":"sac","HOME":"home"}},"T1111121":{"name":"T1111121","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"TROCAR BOBINA DA SOLENÓIDE.","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T1111122":{"name":"T1111122","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFICAR SE NÃO HÁ FIO ALGUM FIO ROMPIDO OU LIGAÇÃO INCORRETA.","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T11112":{"name":"T11112","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"REGULAR PRESSÃO DE DESARME DO PRESSOSTATO DE BAIXA CONFORME TABELA","clickable":false,"checked":false},{"name":"Botão1","type":"Button","text":"TABELA","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home","Botão1":"TABELADEPRESSOES"}},"T1112":{"name":"T1112","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"COMPRESSOR ESTÁ COMPRIMINDO?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T11121","BNAO":"T11122","ISIte":"site","iSAC":"sac","HOME":"home"}},"T11121":{"name":"T11121","title":"T11121","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"CONFIRA OS SEGUINTES PONTOS E MARQUE AS OPÇÕES QUE FOREM VERDADEIRAS:","clickable":false,"checked":false},{"name":"CONDENSADOR","type":"Switch","text":"CONDENSADOR/PASSAGEM DE AR  DESOBSTRUIDA?","clickable":false,"checked":false},{"name":"TEMP","type":"Switch","text":"TEMPERATURA AMBIENTE ADEQUADA?","clickable":false,"checked":false},{"name":"CHOPE","type":"Switch","text":"TEMPERATURA DE ENTRADA DO CHOPE ADEQUADA?","clickable":false,"checked":false},{"name":"VAZAO","type":"Switch","text":"VAZÃO DE EXTRAÇÃO CONFORME ESPECIFICADO?","clickable":false,"checked":false},{"name":"Botão1","type":"Button","text":"AVANÇAR","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home","Botão1":"sac"}},"T11122":{"name":"T11122","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"POSSÍVEL DEFEITO NO COMPRESSOR.","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T11211":{"name":"T11211","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFICAR COMPONENTES ELÉTRICOS DO COMPRESSOR","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T11212":{"name":"T11212","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"PRESSOSTATO DE SEGURANÇA LINHA DE ALTA ESTA DANDO CONTINUIDADE?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T112121","BNAO":"T112122","ISIte":"site","iSAC":"sac","HOME":"home"}},"T112121":{"name":"T112121","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFICAR CHICOTE ELÉTRICO, POSSIVEL ROMPIMENTO DE FIO OU LIGAÇÃO ERRADA","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T112122":{"name":"T112122","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"RETIRAR O PRESSOSTATO E LIGAR O COMPRESSOR DIRETO NO CONTROLE DO PRESSOSTATO.  FUNCIONOU?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T1121221","BNAO":"T1121222","ISIte":"site","iSAC":"sac","HOME":"home"}},"T1121221":{"name":"T1121221","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"SUBSTITUIR O PRESSOSTATO DE SEGURANÇA","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T1121222":{"name":"T1121222","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VÁLVULA SOLENÓIDE ESTÁ ATUANDO?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T11212221","BNAO":"T11212222","ISIte":"site","iSAC":"sac","HOME":"home"}},"T11212221":{"name":"T11212221","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"POSSÍVEL ENTUPIMENTO NO SISTEMA.","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T11212222":{"name":"T11212222","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"ESTA CHEGANDO TENSÃO NA BOBINA DA VÁLVULA SOLENÓIDE?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T112122221","BNAO":"T112122222","ISIte":"site","iSAC":"sac","HOME":"home"}},"T112122221":{"name":"T112122221","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"SUBSTITUIR BOBINA DA VÁLVULA SOLENÓIDE","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T112122222":{"name":"T112122222","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFICAR CHICOTE ELÉTRICO.","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T11_11_11_21_1":{"name":"T11_11_11_21_1","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda3","type":"Label","text":"VERIFICAR SE O CABEAMENTO DO CLIENTE ESTA DE ACORDO COMO ESPECFICADO PELA MEMO PARA O EQUIPAMENTO","clickable":false,"checked":false},{"name":"Legenda1","type":"Label","text":"A INSTALAÇÃO ESTÁ CORRETA?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T11_11_11_21_11","BNAO":"T11_11_11_21_12","ISIte":"site","iSAC":"sac","HOME":"home"}},"T11_11_11_21_11":{"name":"T11_11_11_21_11","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFICAR POSSÍVEL FALHA NO KIT ELÉTRICO.","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T11_11_11_21_12":{"name":"T11_11_11_21_12","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"SOLICITAR CORREÇÃO.","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T11_11_11_21_2":{"name":"T11_11_11_21_2","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda3","type":"Label","text":"SOLICITAR CORREÇÃO.","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T1C":{"name":"T1C","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"EQUIPAMENTO LIGADO? LED/VENTILADOR/ CONTROLADOR?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T1_1C","BNAO":"T1_2","ISIte":"site","iSAC":"sac","HOME":"home"}},"T1C_1_1":{"name":"T1C_1_1","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFIQUE A TENSÃO QUE ESTA CHEGANDO NO EQUIPAMENTO! PARA EQUIPAMENTOS 220V DEVERÁ ESTAR ENTRE 195V E 245V. PARA 127V DEVERÁ ESTAR ENTRE 105V E 145V.","clickable":false,"checked":false},{"name":"Legenda2","type":"Label","text":"A TENSÃO MEDIDA ESTA DENTRO DO LIMITE ESTABELECIDO?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T1C_1_1_1","BNAO":"T1C_1_1_2","ISIte":"site","iSAC":"sac","HOME":"home"}},"T1C_1_1_1":{"name":"T1C_1_1_1","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"AJUSTE O OFSET DE TENSÃO NO CONTROLADOR ATRAVES DO PARAMETRO \"OU\"","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T1C_1_1_2":{"name":"T1C_1_1_2","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda2","type":"Label","text":"SOLICITE A CORREÇÃO AO CLIENTE OU  CONFIGURE OS PARAMETROS \"LU\" E \"HU\" PARA \"OF\". ORIENTAR PERDA DE GARANTIA CASO CLIENTE OPTE PELA DESATIVAÇÃO DOS PARÂMETROS DE PROTEÇÃO.","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T1_1":{"name":"T1_1","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"COMPRESSOR ESTA LIGANDO?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T1_1_1","BNAO":"T1_1_2","ISIte":"site","iSAC":"sac","HOME":"home"}},"T1_1C":{"name":"T1_1C","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"DISPLAY APRESENTA MENSAGEM DE ERRO \"LU\" OU \"HU\"?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T1C_1_1","BNAO":"T1_1C_2","ISIte":"site","iSAC":"sac","HOME":"home"}},"T1_1C_2":{"name":"T1_1C_2","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"COMPRESSOR ESTA LIGANDO?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T1_1_1","BNAO":"T1_1_2","ISIte":"site","iSAC":"sac","HOME":"home"}},"T1_1_1":{"name":"T1_1_1","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"COMPRESSOR CHEGA DESLIGAR EM ALGUM MOMENTO?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T1111","BNAO":"T1112","ISIte":"site","iSAC":"sac","HOME":"home"}},"T1_1_2":{"name":"T1_1_2","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VENTILADOR DO CONDENSADOR ESTA LIGANDO?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T1_1_2_1","BNAO":"T1_1_2_2","ISIte":"site","iSAC":"sac","HOME":"home"}},"T1_1_2_1":{"name":"T1_1_2_1","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"ESTÁ CHEGANDO TENSÃO NO COMPRESSOR?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T11211","BNAO":"T11212","ISIte":"site","iSAC":"sac","HOME":"home"}},"T1_1_2_2":{"name":"T1_1_2_2","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"PRESSÃO DO BOILER ABAIXO DO SETPOINT DE DESARME?","clickable":false,"checked":false},{"name":"pressoes","type":"Image","picture":"sinal-de-interrogacao.png","clickable":true,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T1_1_2_2_1","BNAO":"T1_1_2_2_2","ISIte":"site","iSAC":"sac","HOME":"home","pressoes":"TABELADEPRESSOES"}},"T1_1_2_2_1":{"name":"T1_1_2_2_1","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"POSSÍVEL FALTA DE FLUIDO REFRIGERANTE","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T1_1_2_2_2":{"name":"T1_1_2_2_2","title":"T1","elements":[{"name":"ISIte2","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME2","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC2","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFICAR CONTINUIDADE NOS POLOS DO PRESSOSTATO","clickable":false,"checked":false},{"name":"Legenda2","type":"Label","text":"OS POLOS DO PRESSOSTATO ESTÃO DANDO CONTINUIDADE?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"MEDIRTENSÃO","type":"Image","picture":"sinal-de-interrogacao.png","clickable":true,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T1_1_2_2_2_1","BNAO":"T1_1_2_2_2_2","ISIte2":"site","iSAC2":"sac","HOME2":"home","MEDIRTENSÃO":"MEDIRTENSAOYTB"}},"T1_1_2_2_2_1":{"name":"T1_1_2_2_2_1","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFICAR CHICOTE ELÉTRICO.","clickable":false,"checked":false},{"name":"Legenda2","type":"Label","text":"ENCONTROU ALGUM DEFEITO?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"home","BNAO":"T1_1_2_1","ISIte":"site","iSAC":"sac","HOME":"home"}},"T1_1_2_2_2_2":{"name":"T1_1_2_2_2_2","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"POSSÍVEL DESREGULAGEM/DEFEITO NO PRESSOSTATO (KP1)","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T1_2":{"name":"T1_2","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"MEDIR TENSÃO DA TOMADA. ","clickable":false,"checked":false},{"name":"Legenda2","type":"Label","text":"ESTA CHEGANDO TENSÃO DE ACORDO COM A NECESSIDADE DO EQUIPAMENTO?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"MEDIRTENSÃO","type":"Image","picture":"sinal-de-interrogacao.png","clickable":true,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T_1_2_1","BNAO":"T_1_2_2","ISIte":"site","iSAC":"sac","HOME":"home","MEDIRTENSÃO":"MEDIRTENSAOYTB"}},"T2":{"name":"T2","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"MEDIR TENSÃO NA ENTRADA DA FONTE","clickable":false,"checked":false},{"name":"Legenda2","type":"Label","text":"ESTA CHEGANDO TENSÃO DE ACORDO COM A NECESSIDADE DA FONTE?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"MEDIRTENSÃO","type":"Image","picture":"sinal-de-interrogacao.png","clickable":true,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T21","BNAO":"T22","ISIte":"site","iSAC":"sac","HOME":"home","MEDIRTENSÃO":"MEDIRTENSAOYTB"}},"T21":{"name":"T21","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"MEDIR TENSÃO NA SAÍDA DA FONTE","clickable":false,"checked":false},{"name":"Legenda2","type":"Label","text":"ESTA SAINDO 12VDC DA FONTE?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"MEDIRTENSÃO","type":"Image","picture":"sinal-de-interrogacao.png","clickable":true,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T211","BNAO":"T212","ISIte":"site","iSAC":"sac","HOME":"home","MEDIRTENSÃO":"MEDIR12VDC"}},"T211":{"name":"T211","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"MEDIR TENSÃO NA ENTRADA DO LED","clickable":false,"checked":false},{"name":"Legenda2","type":"Label","text":"ESTA CHEGANDO 12VDC NO LED?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"MEDIRTENSÃO","type":"Image","picture":"sinal-de-interrogacao.png","clickable":true,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T2111","BNAO":"T2112","ISIte":"site","iSAC":"sac","HOME":"home","MEDIRTENSÃO":"MEDIR12VDC"}},"T2111":{"name":"T2111","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"SUBSTITUIR BARRA DE LED","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T2112":{"name":"T2112","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFICAR CHICOTE ENTRE FONTE E BARRA DE LED. POSSÍVEL ROMPIMENTO DE FIO.","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T212":{"name":"T212","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"SUBSTITUIR A FONTE","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T22":{"name":"T22","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFICAR CHICOTE ELÉTRICO","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T3":{"name":"T3","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFICAR CONEXÕES DE CHOPE, O'RING DA TORNEIRA.","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"TABELADEPRESSOES":{"name":"TABELADEPRESSOES","title":"TABELADEPRESSOES","elements":[{"name":"Imagem1","type":"Image","picture":"PRESSOES.PNG","clickable":false,"checked":false}],"navigation":{}},"T_1_2_1":{"name":"T_1_2_1","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"MEDIR CONTINUIDADE DO CABO DE ALIMENTAÇÃO DO EQUIPAMENTO.","clickable":false,"checked":false},{"name":"Legenda2","type":"Label","text":"O CABO DE ALIMENTAÇÃO ESTA SEM DEFEITOS?","clickable":false,"checked":false},{"name":"BNAO","type":"Button","text":"NÃO","clickable":false,"checked":false},{"name":"MEDIRCONTIN","type":"Image","picture":"sinal-de-interrogacao.png","clickable":true,"checked":false},{"name":"BSIM","type":"Button","text":"SIM","clickable":false,"checked":false}],"navigation":{"BSIM":"T_1_2_1_1","BNAO":"T_1_2_1_2","ISIte":"site","iSAC":"sac","HOME":"home","MEDIRCONTIN":"CONTINUIDADEYTB"}},"T_1_2_1_1":{"name":"T_1_2_1_1","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFICAR LIGAÇÃO / CHICOTE \n  ELÉTRICO DO EQUIPAMENTO:                   ","clickable":false,"checked":false},{"name":"Legenda2","type":"Label","text":" POSSIVEL ROMPIMENTO/FIO SOLTO OU LIGAÇÃO ERRADA.","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T_1_2_1_2":{"name":"T_1_2_1_2","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"SUBSTITUIR CABO DE ALIMENTAÇÃO","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"T_1_2_2":{"name":"T_1_2_2","title":"T1","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"HOME","type":"Image","picture":"HOME.jpg","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"VERIFICAR DISJUNTOR E SOLICITAR CORREÇÃO","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","HOME":"home"}},"home":{"name":"home","title":"home","elements":[{"name":"ISIte","type":"Image","picture":"logosite.png","clickable":true,"checked":false},{"name":"iSAC","type":"Image","picture":"sac.png","clickable":true,"checked":false},{"name":"Chopeira_Expansão_Direta","type":"Image","picture":"small.jpg","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"Chopeiras Expansão Direta","clickable":false,"checked":false},{"name":"HUG","type":"Image","picture":"hug.jpg","clickable":true,"checked":false},{"name":"Legenda2","type":"Label","text":"Linha HUG","clickable":false,"checked":false},{"name":"Imagem2","type":"Image","picture":"nano.png","clickable":true,"checked":false},{"name":"preresfriadores","type":"Image","picture":"preresf.jpg","clickable":true,"checked":false},{"name":"Legenda3","type":"Label","text":"Pré Resfriadores","clickable":false,"checked":false}],"navigation":{"ISIte":"site","iSAC":"sac","Chopeira_Expansão_Direta":"T0","HUG":"T0C","preresfriadores":"T0P"}},"sac":{"name":"sac","title":"Assistencia","elements":[{"name":"Imagem1","type":"Image","picture":"logo.png","clickable":true,"checked":false},{"name":"Legenda1","type":"Label","text":"Entrar em contato com a assistência técnica MEMO:","clickable":false,"checked":false},{"name":"Legenda2","type":"Label","text":"Para agilizar seu atendimento, envie uma imagem da etiqueta do equipamento que apresenta problemas.","clickable":false,"checked":false},{"name":"imwpp2","type":"Image","picture":"pngwing.com(2).png","clickable":true,"checked":false},{"name":"bwpp2","type":"Button","text":"Whatsapp","clickable":false,"checked":false},{"name":"imcall","type":"Image","picture":"pngwing.com(3).png","clickable":true,"checked":false},{"name":"bliga","type":"Button","text":"Ligar","clickable":false,"checked":false},{"name":"Ligação1","type":"PhoneCall","clickable":false,"url":"+551639699797","checked":false}],"navigation":{"Imagem1":"Sitensf"}},"site":{"name":"site","title":"site","elements":[{"name":"NavegadorWeb1","type":"WebViewer","clickable":false,"url":"www.memo.ind.br","checked":false}],"navigation":{}}}};
+  const screens=APP_DATA.screens;
+  const titles={home:"Selecione a linha de produto",T0:"Chopeiras de expansão direta",T0C:"Linha HUG",T0P:"Pré-resfriadores",TABELADEPRESSOES:"Tabela de pressões",MEDIRTENSAOYTB:"Como medir tensão",MEDIR12VDC:"Como medir 12 VDC",CONTINUIDADEYTB:"Como medir continuidade",sac:"Assistência técnica Memo",site:"Site Memo"};
+  const globals=new Set(["HOME","HOME2","ISIte","ISIte2","iSAC","iSAC2"]);
+  let current="Screen1", history=[], checks={};
+  const $=s=>document.querySelector(s);
+  const clean=s=>(s||"").replace(/\s+/g," ").replace("RANDÔMETRO","CONTROLADOR").trim();
+  const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const asset=n=>window.ASSETS[n]||"";
+  function nav(next){
+    if(next==="Sitensf"){open("https://www.memo.ind.br","_blank","noopener");return}
+    if(!screens[next])return;
+    history.push(current);current=next;checks={};render();scrollTo({top:0,behavior:"smooth"});
+  }
+  function back(){current=history.pop()||"home";checks={};render()}
+  function home(){current="home";history=[];checks={};render()}
+  function heading(s,isHome){return `<section class="screen-heading"><p class="section-kicker">${isHome?"ASSISTÊNCIA TÉCNICA INTELIGENTE":"ETAPA "+Math.max(1,history.length)}</p><h1>${esc(titles[s.name]||"Diagnóstico técnico")}</h1>${isHome?"<p>Escolha o equipamento para iniciar o procedimento de diagnóstico.</p>":""}</section>`}
+  function productMenu(s){
+    const p=[
+      ["Chopeira_Expansão_Direta","Chopeiras de expansão direta","Diagnóstico de refrigeração, iluminação e vazamentos.","small.jpg","CHOPEIRAS"],
+      ["HUG","Linha HUG","Equipamentos com controlador e proteções eletrônicas.","hug.jpg","LINHA HUG"],
+      ["preresfriadores","Pré-resfriadores","Acesso à área original de pré-resfriadores.","preresf.jpg","PRÉ-RESFRIADORES"]
+    ];
+    return '<section class="product-grid" aria-label="Linhas de produto">'+p.map(x=>`<button class="product-card" data-nav="${esc(s.navigation[x[0]])}"><span class="product-media"><img src="${asset(x[3])}" alt=""><span>${x[4]}</span></span><span class="product-copy"><strong>${x[1]}</strong><small>${x[2]}</small></span><span class="product-arrow">→</span></button>`).join("")+"</section>";
+  }
+  function symptomMenu(s){
+    const p=s.name==="T0C"?"Linha HUG":"Expansão direta";
+    const items=[["NÃO_GELA","Não refrigera","Comando, compressor e circuito frigorífico.","pngwing.com(1).png"],["ILUMINAÇÃO","Iluminação","Fonte, chicote e barra de LED.","pngwing.com.png"],["VAZAMENTO","Vazamento","Conexões, torneira e vedações.","vazamento.png"]];
+    return `<div class="selected-product"><span>Equipamento selecionado</span><strong>${p}</strong></div><section class="symptom-menu">${items.map((x,i)=>`<button data-nav="${esc(s.navigation[x[0]])}"><span class="symptom-index">0${i+1}</span><img src="${asset(x[3])}" alt=""><span class="symptom-text"><strong>${x[1]}</strong><small>${x[2]}</small></span><span class="symptom-arrow">→</span></button>`).join("")}</section>`;
+  }
+  function diagnostic(s){
+    const labels=s.elements.filter(x=>x.type==="Label"&&x.text).map(x=>clean(x.text));
+    const boxes=s.elements.filter(x=>x.type==="CheckBox");
+    const buttons=s.elements.filter(x=>x.type==="Button"&&x.text);
+    const navigation=Object.entries(s.navigation).filter(([k])=>!globals.has(k));
+    const terminal=!navigation.length;
+    const override=s.name==="T112122"?"Com a pressão dentro do limite e seguindo o procedimento elétrico da Memo, confirme se o pressostato está interrompendo indevidamente o compressor. O compressor volta a funcionar?":null;
+    const main=override||labels.find(x=>x.endsWith("?"))||labels[0]||"Procedimento técnico";
+    const support=labels.filter(x=>x!==main);
+    const actions=navigation.map(([component,target])=>{
+      const el=s.elements.find(x=>x.name===component), b=buttons.find(x=>x.name===component);
+      let text=b?.text||el?.text;
+      const c=component.toUpperCase();
+      if(!text) text=c.includes("SIM")?"SIM":(c.includes("NAO")||c.includes("NÃO"))?"NÃO":(c.includes("TENS")||c.includes("CONTIN"))?"VER COMO MEDIR":component.toLowerCase().includes("press")?"CONSULTAR TABELA":"AVANÇAR";
+      return {target,text:clean(text)};
+    }).filter(x=>x.target&&screens[x.target]);
+    const warning=s.name==="T112122"?'<div class="critical-warning"><strong>Proteção obrigatória</strong>Nunca deixe o pressostato de alta ponteado. Qualquer teste deve ser controlado, com pressão monitorada e conforme o procedimento Memo.</div>':s.name==="T1C_1_1_2"?'<div class="critical-warning"><strong>Atenção</strong>Não desative proteções LU/HU sem autorização e registro formal da condição elétrica encontrada.</div>':"";
+    return `<section class="diagnostic-layout"><div class="diagnostic-progress"><span>Diagnóstico em andamento</span><span class="progress-dots"><i></i><i></i><i></i><i></i><i></i></span></div><article class="diagnostic-card ${terminal?"terminal":""}"><div class="diagnostic-icon">${terminal?"✓":s.name.startsWith("T2")?"V":"?"}</div><p class="diagnostic-code">PROCEDIMENTO ${esc(s.name)}</p><h2>${esc(main)}</h2>${support.length?'<div class="supporting-copy">'+support.map(x=>'<p>'+esc(x)+'</p>').join("")+'</div>':""}${warning}${boxes.length?'<div class="original-checklist">'+boxes.map(x=>`<label><input type="checkbox" data-check="${esc(x.name)}" ${checks[x.name]?"checked":""}><span>${esc(clean(x.text||x.name))}</span></label>`).join("")+'</div>':""}${!terminal?'<div class="diagnostic-actions '+(actions.length===1?"single":"")+'">'+actions.map(a=>{const u=a.text.toUpperCase(),y=u==="SIM",n=u==="NÃO"||u==="NAO";return `<button class="${y?"yes":n?"no":"secondary-diagnostic"}" data-nav="${esc(a.target)}"><span>${y?"✓":n?"×":"→"}</span>${esc(a.text)}</button>`}).join("")+'</div>':'<div class="terminal-actions"><button data-home>Novo diagnóstico</button><a href="tel:+551639699797">Falar com a assistência</a></div>'}</article></section>`;
+  }
+  function content(s){
+    if(s.name==="home")return productMenu(s);
+    if(s.name==="T0"||s.name==="T0C")return symptomMenu(s);
+    if(s.name==="T0P")return '<section class="empty-original"><span>PR</span><h2>Pré-resfriadores</h2><p>Esta tela já existia no aplicativo original, mas ainda não possuía procedimentos cadastrados.</p><button data-home>Escolher outro equipamento</button></section>';
+    if(s.name==="sac")return `<section class="support-card"><img src="${asset("logo.png")}" alt="Memo"><p>Entrar em contato com a assistência técnica Memo</p><h2>Envie uma foto da etiqueta do equipamento para agilizar o atendimento.</h2><div><a href="https://wa.me/5516988482342" target="_blank">WhatsApp</a><a href="tel:+551639699797">Ligar</a></div></section>`;
+    if(s.name==="site")return `<section class="support-card site-card"><img src="${asset("logo.png")}" alt="Memo"><p>MEMO — Soluções em refrigeração</p><h2>Consulte produtos, documentos e informações institucionais.</h2><div><a href="https://www.memo.ind.br" target="_blank">Abrir site da Memo</a></div></section>`;
+    const web=s.elements.find(x=>x.type==="WebViewer"&&x.url);
+    if(web){let u=web.url;try{const id=new URL(u).searchParams.get("v");if(id)u="https://www.youtube.com/embed/"+id}catch{}return `<section class="video-card"><div><p>VÍDEO DE APOIO</p><h2>${esc(titles[s.name]||"Diagnóstico técnico")}</h2></div><iframe src="${esc(u)}" title="Vídeo de apoio" allowfullscreen></iframe></section>`}
+    if(s.name==="TABELADEPRESSOES")return `<section class="pressure-screen"><img src="${asset("PRESSOES.PNG")}" alt="Tabela de pressões das chopeiras"></section>`;
+    return diagnostic(s);
+  }
+  function render(){
+    const s=screens[current]||screens.home;
+    if(s.name==="Screen1"){
+      $("#app").innerHTML=`<main class="splash"><button class="splash-entry" data-nav="${esc(s.navigation.Imagem1||"home")}" aria-label="Entrar no diagnóstico Memo"><img src="${asset("logo.png")}" alt="Memo — Melhores momentos"><span class="splash-divider"></span><small>Assistência técnica inteligente</small><span class="enter-label">TOQUE PARA ENTRAR</span></button></main>`;
+    } else {
+      const isHome=s.name==="home";
+      $("#app").innerHTML=`<main class="app-shell"><header class="app-header"><button class="memo-brand" data-home><img src="${asset("logo.png")}" alt="Memo"></button><nav class="header-actions">${!isHome?'<button data-home><span>⌂</span>Início</button>':""}<button data-nav="sac"><span>?</span>SAC</button><button data-nav="site"><span>↗</span>Site</button></nav></header><div class="app-content">${!isHome?'<button class="back-button" data-back><span>←</span> Voltar</button>':""}${heading(s,isHome)}${content(s)}</div><footer class="app-footer"><span>Memo • Assistência Técnica</span><span>${Object.keys(screens).length} telas do aplicativo integradas</span></footer></main>`;
+    }
+    document.querySelectorAll("[data-nav]").forEach(x=>x.onclick=()=>nav(x.dataset.nav));
+    document.querySelectorAll("[data-home]").forEach(x=>x.onclick=home);
+    document.querySelectorAll("[data-back]").forEach(x=>x.onclick=back);
+    document.querySelectorAll("[data-check]").forEach(x=>x.onchange=()=>checks[x.dataset.check]=x.checked);
+  }
+  render();
+  </script>
+</body>
+</html>
