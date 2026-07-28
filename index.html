@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#ed1c24">
   <meta name="description" content="Memo — diagnóstico técnico passo a passo para equipamentos de refrigeração.">
   <title>Memo | Diagnóstico técnico</title>
-  <meta name="build" content="memo-intuitivo-v2">
+  <meta name="build" content="memo-intuitivo-v3">
   <style>
 
 :root {
@@ -292,18 +292,66 @@ button {
   height: 235px;
   overflow: hidden;
   display: block;
-  background: #e8e8e9;
+  background: linear-gradient(145deg, #f7f7f7, #ececee);
 }
 
 .product-media img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  padding: 18px;
+  object-fit: contain;
+  object-position: center;
   transition: transform 260ms ease;
 }
 
 .product-card:hover .product-media img {
-  transform: scale(1.035);
+  transform: scale(1.015);
+}
+
+.how-it-works {
+  margin: 0 0 22px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.how-step {
+  padding: 15px 16px;
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 11px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+}
+
+.how-step > span {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: white;
+  background: var(--memo-red);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.how-step strong,
+.how-step small {
+  display: block;
+}
+
+.how-step strong {
+  font-size: 13px;
+}
+
+.how-step small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
 }
 
 .product-media > span {
@@ -545,6 +593,17 @@ button {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: .04em;
+}
+
+.safety-note {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-left: 4px solid #e2a300;
+  border-radius: 4px;
+  background: #fff9e8;
+  color: #61532b;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .critical-warning {
@@ -847,6 +906,10 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .how-it-works {
+    grid-template-columns: 1fr;
+  }
+
   .product-card {
     min-height: 150px;
     display: grid;
@@ -856,6 +919,10 @@ button {
   .product-media {
     height: 100%;
     min-height: 150px;
+  }
+
+  .product-media img {
+    padding: 10px;
   }
 
   .product-media > span {
@@ -1027,7 +1094,8 @@ button {
       ["HUG","Linha HUG","Equipamentos com controlador e proteções eletrônicas.","hug.jpg","LINHA HUG"],
       ["preresfriadores","Pré-resfriadores","Acesso à área original de pré-resfriadores.","preresf.jpg","PRÉ-RESFRIADORES"]
     ];
-    return '<section class="product-grid" aria-label="Linhas de produto">'+p.map(x=>`<button class="product-card" data-nav="${esc(s.navigation[x[0]])}"><span class="product-media"><img src="${asset(x[3])}" alt=""><span>${x[4]}</span></span><span class="product-copy"><strong>${x[1]}</strong><small>${x[2]}</small></span><span class="product-arrow">→</span></button>`).join("")+"</section>";
+    const guide='<section class="how-it-works" aria-label="Como usar"><div class="how-step"><span>1</span><div><strong>Escolha o equipamento</strong><small>Selecione a linha que será verificada.</small></div></div><div class="how-step"><span>2</span><div><strong>Observe e responda</strong><small>Cada pergunta explica o que você deve conferir.</small></div></div><div class="how-step"><span>3</span><div><strong>Siga a orientação</strong><small>O site indica o próximo teste ou a possível solução.</small></div></div></section>';
+    return guide+'<section class="product-grid" aria-label="Linhas de produto">'+p.map(x=>`<button class="product-card" data-nav="${esc(s.navigation[x[0]])}"><span class="product-media"><img src="${asset(x[3])}" alt="${esc(x[1])}"><span>${x[4]}</span></span><span class="product-copy"><strong>${x[1]}</strong><small>${x[2]}</small></span><span class="product-arrow">→</span></button>`).join("")+"</section>";
   }
   function symptomMenu(s){
     const p=s.name==="T0C"?"Linha HUG":"Expansão direta";
@@ -1055,7 +1123,9 @@ button {
       return {target,text:clean(text),isYes,isNo};
     }).filter(x=>x.target&&screens[x.target]);
     const warning=s.name==="T112122"?'<div class="critical-warning"><strong>Proteção obrigatória</strong>Nunca deixe o pressostato de alta ponteado. Qualquer teste deve ser controlado, com pressão monitorada e conforme o procedimento Memo.</div>':s.name==="T1C_1_1_2"?'<div class="critical-warning"><strong>Atenção</strong>Não desative proteções LU/HU sem autorização e registro formal da condição elétrica encontrada.</div>':"";
-    return `<section class="diagnostic-layout"><div class="diagnostic-progress"><span>Passo a passo em andamento</span><span class="progress-dots"><i></i><i></i><i></i><i></i><i></i></span></div><article class="diagnostic-card ${terminal?"terminal":""}"><div class="diagnostic-icon">${terminal?"✓":s.name.startsWith("T2")?"V":"?"}</div><p class="diagnostic-code">${terminal?"ORIENTAÇÃO ENCONTRADA":"OBSERVE E RESPONDA"}</p><h2>${esc(main)}</h2>${guide?.h?'<div class="beginner-guide"><span>i</span><div>'+esc(guide.h)+'</div></div>':""}${support.length?'<div class="supporting-copy">'+support.map(x=>'<p>'+esc(x)+'</p>').join("")+'</div>':""}${warning}${boxes.length?'<div class="original-checklist">'+boxes.map(x=>`<label><input type="checkbox" data-check="${esc(x.name)}" ${checks[x.name]?"checked":""}><span>${esc(clean(x.text||x.name))}</span></label>`).join("")+'</div>':""}${!terminal?'<p class="answer-instruction">TOQUE NA OPÇÃO QUE CORRESPONDE AO QUE VOCÊ ENCONTROU:</p><div class="diagnostic-actions '+(actions.length===1?"single":"")+'">'+actions.map(a=>{const u=a.text.toUpperCase(),y=a.isYes||u==="SIM",n=a.isNo||u==="NÃO"||u==="NAO";return `<button class="${y?"yes":n?"no":"secondary-diagnostic"}" data-nav="${esc(a.target)}"><span>${y?"✓":n?"×":"→"}</span>${esc(a.text)}</button>`}).join("")+'</div>':'<div class="terminal-actions"><button data-home>Começar outro diagnóstico</button><a href="tel:+551639699797">Preciso de ajuda</a></div>'}</article></section>`;
+    const needsMeter=/meça|multímetro|tensão|continuidade/i.test((guide?.h||"")+" "+main);
+    const safety=needsMeter?'<div class="safety-note"><strong>Segurança:</strong> se você não sabe usar o multímetro ou trabalhar com eletricidade, não faça a medição energizada. Solicite ajuda de uma pessoa habilitada.</div>':"";
+    return `<section class="diagnostic-layout"><div class="diagnostic-progress"><span>Passo a passo em andamento</span><span class="progress-dots"><i></i><i></i><i></i><i></i><i></i></span></div><article class="diagnostic-card ${terminal?"terminal":""}"><div class="diagnostic-icon">${terminal?"✓":s.name.startsWith("T2")?"V":"?"}</div><p class="diagnostic-code">${terminal?"ORIENTAÇÃO ENCONTRADA":"OBSERVE E RESPONDA"}</p><h2>${esc(main)}</h2>${guide?.h?'<div class="beginner-guide"><span>i</span><div>'+esc(guide.h)+'</div></div>':""}${safety}${support.length?'<div class="supporting-copy">'+support.map(x=>'<p>'+esc(x)+'</p>').join("")+'</div>':""}${warning}${boxes.length?'<div class="original-checklist">'+boxes.map(x=>`<label><input type="checkbox" data-check="${esc(x.name)}" ${checks[x.name]?"checked":""}><span>${esc(clean(x.text||x.name))}</span></label>`).join("")+'</div>':""}${!terminal?'<p class="answer-instruction">TOQUE NA OPÇÃO QUE CORRESPONDE AO QUE VOCÊ ENCONTROU:</p><div class="diagnostic-actions '+(actions.length===1?"single":"")+'">'+actions.map(a=>{const u=a.text.toUpperCase(),y=a.isYes||u==="SIM",n=a.isNo||u==="NÃO"||u==="NAO";return `<button class="${y?"yes":n?"no":"secondary-diagnostic"}" data-nav="${esc(a.target)}"><span>${y?"✓":n?"×":"→"}</span>${esc(a.text)}</button>`}).join("")+'</div>':'<div class="terminal-actions"><button data-home>Começar outro diagnóstico</button><a href="tel:+551639699797">Preciso de ajuda</a></div>'}</article></section>`;
   }
   function content(s){
     if(s.name==="home")return productMenu(s);
